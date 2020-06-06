@@ -18,27 +18,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'v1'], function () {
-    Route::group(['middleware' => 'cors'], function () {
-        Route::group(['middleware' => 'jwt.auth'], function () {
-
-        });
-
-        //obter token
-        Route::post('login', 'Api\AuthController@login');
-
-        //para atualizar o token
-        Route::post('refresh_token', function () {
-            try {
-                $token = JWTAuth::parseToken()->refresh();
-                return response()->json([
-                    'success' => true,
-                    'access_token' => $token,
-                    'token_type' => 'bearer',
-                ]);
-            } catch (JWTException $exception) {
-                return response()->json(['error' => 'token_invalid'], 400);
-            }
-        });
-    });
+Route::group([
+    'prefix' => 'v1',
+    'namespace' => 'Api\v1',
+], function () {
+    Route::apiResource('pacientes', 'PacienteController');
 });
